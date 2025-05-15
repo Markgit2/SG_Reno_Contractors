@@ -1,0 +1,60 @@
+from googlesearch import search
+import webbrowser
+import urllib.parse
+
+def generate_google_search_url(query):
+    """Return a Google Search URL for the query."""
+    encoded_query = urllib.parse.quote_plus(query)
+    return f"https://www.google.com/search?q={encoded_query}"
+
+def find_review_links(company_name, max_results=5):
+    """Find top review URLs from Qanvast, RenoNation, Google Maps + Google search."""
+    query_base = f"{company_name} renovation reviews"
+
+    sources = {
+        "Google Search": generate_google_search_url(query_base),
+        "Google Maps": f"{company_name} site:google.com/maps",
+        "Qanvast": f"{query_base} site:qanvast.com",
+        "RenoNation": f"{query_base} site:renonation.sg"
+    }
+
+    review_links = {}
+
+    for source, query in sources.items():
+        if source == "Google Search":
+            review_links[source] = [query] 
+        else:
+            try:
+                results = list(search(query, num_results=max_results))
+                review_links[source] = results
+            except Exception as e:
+                review_links[source] = [f"Search error: {str(e)}"]
+
+    return review_links
+
+# Prompt user for input
+if __name__ == "__main__":
+    company = input("Enter the renovation company name: ").strip()
+
+    if not company:
+        print("❌ Company name cannot be empty.")
+    else:
+        print(f"\n🔍 Searching for reviews for: {company}...\n")
+        results = find_review_links(company)
+
+        for source, links in results.items():
+            print(f"\n🔗 {source} link:")
+            if links and links[0].startswith("http"):
+                print(f" - {links[0]}")
+            else:
+                print("   No valid link found.")
+
+        # Ask to open links
+        open_links = input("\n🌐 Do you want to open the top review link from each site? (y/n): ").lower()
+        if open_links == "y":
+            for link_list in results.values():
+                if link_list and link_list[0].startswith("http"):
+                    webbrowser.open_new_tab(link_list[0])
+            print("\n✅ Top links opened in your default browser.")
+        else:
+            print("\n❎ Links not opened.")
