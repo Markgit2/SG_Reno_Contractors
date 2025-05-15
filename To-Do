@@ -1,0 +1,7 @@
+To Do:
+
+Add another line to ask if customers want to be recommended Contractors based on data.sg link (https://data.gov.sg/datasets?query=Renovation+Contractors&page=1&resultId=d_9973d2c119ed4dd1560aebf8f0829b86)
+
+If customer say yes - the code will prompt them for specified location.
+  - Once they have keyed in their input, the code will run through the csv to find the top 10 rated contractors within the area 
+  - If they specify Any for the locatio, then the code will just give the results for the top 10 rated contractors 
